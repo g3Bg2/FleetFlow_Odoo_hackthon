@@ -17,14 +17,15 @@
     }
   },
   "scripts": {
-    "build": "pnpm run clean && drizzle-kit generate && tsc",
+    "build": "pnpm run clean && dotenv -e ../.env -- drizzle-kit generate && tsc",
     "dev": "tsc -w",
     "clean": "rm -rf dist",
     "lint": "biome check ./src",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-studio"
+    "db:generate": "dotenv -e ../.env -- drizzle-kit generate",
+    "db:migrate": "dotenv -e ../.env -- drizzle-kit migrate",
+    "db:push": "dotenv -e ../.env -- drizzle-kit push",
+    "db:studio": "dotenv -e ../.env -- drizzle-kit studio",
+    "db:seed": "dotenv -- tsx src/seed.ts"
   },
   "keywords": [],
   "author": "",
@@ -32,12 +33,15 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@types/pg": "^8.11.0",
+    "dotenv": "^17.3.1",
+    "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.30.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@repo/typescript-config": "workspace:*",
     "drizzle-orm": "^0.39.1",
-    "pg": "^8.11.3",
-    "@repo/typescript-config": "workspace:*"
+    "pg": "^8.11.3"
   }
 }
