@@ -32,69 +32,44 @@ import {
 
 const trips = [
   {
-    id: "TRP-001",
-    vehicle: "Van-05",
-    driver: "Alex Johnson",
-    cargo: 450,
-    status: "On Trip",
-    from: "Warehouse A",
-    to: "Downtown Hub",
-    date: "2026-02-21",
+    id: "1",
+    fleetType: "Trailer Truck",
+    vehicle: "TATA 1210",
+    driver: "John Doe",
+    origin: "Mumbai",
+    destination: "Pune",
+    status: "On Way",
   },
   {
-    id: "TRP-002",
-    vehicle: "Truck-12",
-    driver: "Sarah Smith",
-    cargo: 15000,
-    status: "Dispatched",
-    from: "Port Terminal",
-    to: "Warehouse B",
-    date: "2026-02-21",
+    id: "2",
+    fleetType: "Mini Truck",
+    vehicle: "Eicher",
+    driver: "Rahul Sharma",
+    origin: "Delhi",
+    destination: "Jaipur",
+    status: "On Way",
   },
   {
-    id: "TRP-003",
-    vehicle: "Bike-03",
-    driver: "Mike Brown",
-    cargo: 30,
+    id: "3",
+    fleetType: "Pickup",
+    vehicle: "Mahindra",
+    driver: "Vikram Singh",
+    origin: "Bangalore",
+    destination: "Chennai",
     status: "Completed",
-    from: "Central Hub",
-    to: "Office Tower",
-    date: "2026-02-20",
-  },
-  {
-    id: "TRP-004",
-    vehicle: "Van-02",
-    driver: "Emily Davis",
-    cargo: 500,
-    status: "Draft",
-    from: "Airport Cargo",
-    to: "Distribution Center",
-    date: "2026-02-22",
-  },
-  {
-    id: "TRP-005",
-    vehicle: "Truck-08",
-    driver: "John Wilson",
-    cargo: 18000,
-    status: "Cancelled",
-    from: "Factory A",
-    to: "Port Terminal",
-    date: "2026-02-19",
   },
 ];
 
 const getStatusBadge = (status: string) => {
   switch (status) {
-    case "Draft":
-      return <Badge variant="secondary">Draft</Badge>;
+    case "On Way":
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">On Way</Badge>;
     case "Dispatched":
-      return <Badge variant="warning">Dispatched</Badge>;
-    case "On Trip":
-      return <Badge variant="info">On Trip</Badge>;
+      return <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Dispatched</Badge>;
     case "Completed":
-      return <Badge variant="success">Completed</Badge>;
+      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
     case "Cancelled":
-      return <Badge variant="destructive">Cancelled</Badge>;
+      return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Cancelled</Badge>;
     default:
       return <Badge variant="secondary">{status}</Badge>;
   }
@@ -107,8 +82,7 @@ export function TripsPage() {
 
   const filteredTrips = trips.filter((t) => {
     const matchesSearch =
-      t.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.vehicle.toLowerCase().includes(searchTerm.toLowerCase());
+      t.id.includes(searchTerm) || t.vehicle.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === "all" || t.status.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
@@ -125,66 +99,67 @@ export function TripsPage() {
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Create Trip
+              New Trip
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create New Trip</DialogTitle>
-              <DialogDescription>Assign vehicle and driver for the trip</DialogDescription>
+              <DialogTitle>New Trip Form</DialogTitle>
+              <DialogDescription>Create a new trip for your fleet</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label>Vehicle</Label>
+                  <Label>Select Vehicle</Label>
                   <Select>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select vehicle" />
+                      <SelectValue placeholder="Choose vehicle" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="van05">Van-05 (500kg)</SelectItem>
-                      <SelectItem value="truck12">Truck-12 (20t)</SelectItem>
-                      <SelectItem value="van02">Van-02 (600kg)</SelectItem>
+                      <SelectItem value="tata">TATA 1210</SelectItem>
+                      <SelectItem value="eicher">Eicher</SelectItem>
+                      <SelectItem value="ashok">Ashok Leyland</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid gap-2">
-                  <Label>Driver</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select driver" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="alex">Alex Johnson</SelectItem>
-                      <SelectItem value="sarah">Sarah Smith</SelectItem>
-                      <SelectItem value="mike">Mike Brown</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="from">From</Label>
-                  <Input id="from" placeholder="Origin location" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="to">To</Label>
-                  <Input id="to" placeholder="Destination" />
+                  <Label>Cargo Weight (Kg)</Label>
+                  <Input type="number" placeholder="0" />
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="cargo">Cargo Weight (kg)</Label>
-                <Input id="cargo" type="number" placeholder="0" />
-                <p className="text-xs text-muted-foreground">
-                  Validation: Cargo must not exceed vehicle capacity
-                </p>
+                <Label>Select Driver</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose driver" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="john">John Doe</SelectItem>
+                    <SelectItem value="rahul">Rahul Sharma</SelectItem>
+                    <SelectItem value="vikram">Vikram Singh</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="origin">Origin Address</Label>
+                  <Input id="origin" placeholder="From location" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="destination">Destination</Label>
+                  <Input id="destination" placeholder="To location" />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label>Estimated Fuel Cost</Label>
+                <Input type="number" placeholder="0" />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={() => setDialogOpen(false)}>Create Trip</Button>
+              <Button onClick={() => setDialogOpen(false)}>Confirm & Dispatch Trip</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -207,9 +182,8 @@ export function TripsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="on way">On Way</SelectItem>
             <SelectItem value="dispatched">Dispatched</SelectItem>
-            <SelectItem value="on trip">On Trip</SelectItem>
             <SelectItem value="completed">Completed</SelectItem>
             <SelectItem value="cancelled">Cancelled</SelectItem>
           </SelectContent>
@@ -222,29 +196,22 @@ export function TripsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Trip ID</TableHead>
+                <TableHead>Trip</TableHead>
+                <TableHead>Fleet Type</TableHead>
                 <TableHead>Vehicle</TableHead>
-                <TableHead>Driver</TableHead>
-                <TableHead>Cargo (kg)</TableHead>
-                <TableHead>Route</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>Origin</TableHead>
+                <TableHead>Destination</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredTrips.map((trip) => (
                 <TableRow key={trip.id}>
-                  <TableCell className="font-medium">{trip.id}</TableCell>
+                  <TableCell className="font-medium">#{trip.id}</TableCell>
+                  <TableCell>{trip.fleetType}</TableCell>
                   <TableCell>{trip.vehicle}</TableCell>
-                  <TableCell>{trip.driver}</TableCell>
-                  <TableCell>{trip.cargo.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div>{trip.from}</div>
-                      <div className="text-muted-foreground">→ {trip.to}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{trip.date}</TableCell>
+                  <TableCell>{trip.origin}</TableCell>
+                  <TableCell>{trip.destination}</TableCell>
                   <TableCell>{getStatusBadge(trip.status)}</TableCell>
                 </TableRow>
               ))}
