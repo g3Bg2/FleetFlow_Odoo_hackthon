@@ -1,7 +1,27 @@
-export { db } from "./db";
-export * from "./driver.schema";
-export * from "./fuel-log.schema";
-export * from "./maintenance-log.schema";
-export * from "./trip.schema";
-export * from "./user.schema";
-export * from "./vehicle.schema";
+export { db } from "./db.js";
+export {
+  type Driver,
+  driverStatusEnum,
+  drivers,
+  type NewDriver,
+} from "./driver.schema.js";
+export { type FuelLog, fuelLogs, type NewFuelLog } from "./fuel-log.schema.js";
+export {
+  type MaintenanceLog,
+  maintenanceLogs,
+  type NewMaintenanceLog,
+} from "./maintenance-log.schema.js";
+export { type NewRole, type Role, roles } from "./role.schema.js";
+export {
+  type NewTrip,
+  type Trip,
+  tripStatusEnum,
+  trips,
+} from "./trip.schema.js";
+export { type NewUser, type User, users } from "./user.schema.js";
+export {
+  type NewVehicle,
+  type Vehicle,
+  vehicleStatusEnum,
+  vehicles,
+} from "./vehicle.schema.js";
