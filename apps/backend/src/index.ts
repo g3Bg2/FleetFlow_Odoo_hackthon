@@ -2,6 +2,7 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { errorHandler, notFoundHandler } from "./middlewares/index.js";
 import authRouter from "./routes/auth.route.js";
+import dashboardRouter from "./routes/dashboard.route.js";
 import driverRouter from "./routes/driver.route.js";
 import fuelLogRouter from "./routes/fuel-log.route.js";
 import maintenanceLogRouter from "./routes/maintenance-log.route.js";
@@ -17,6 +18,8 @@ app.get("/", (c) => {
 });
 
 app.route("/auth", authRouter);
+
+app.route("/dashboard", dashboardRouter);
 
 app.route("/users", userRouter);
 app.route("/roles", roleRouter);
