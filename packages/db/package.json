@@ -20,7 +20,7 @@
     "build": "pnpm run clean && drizzle-kit generate && tsc",
     "dev": "tsc -w",
     "clean": "rm -rf dist",
-    "lint": "",
+    "lint": "biome check ./src",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
