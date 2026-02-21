@@ -181,7 +181,7 @@ export function DriversPage() {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-45">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>

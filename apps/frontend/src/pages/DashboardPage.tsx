@@ -105,7 +105,7 @@ export function DashboardPage() {
         </div>
         <div className="flex items-center gap-2">
           <Select defaultValue="all">
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-37.5">
               <SelectValue placeholder="Vehicle Type" />
             </SelectTrigger>
             <SelectContent>
@@ -116,7 +116,7 @@ export function DashboardPage() {
             </SelectContent>
           </Select>
           <Select defaultValue="all">
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-37.5">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>

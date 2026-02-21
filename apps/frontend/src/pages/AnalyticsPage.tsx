@@ -92,7 +92,7 @@ export function AnalyticsPage() {
         </div>
         <div className="flex items-center gap-2">
           <Select defaultValue="monthly">
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-37.5">
               <SelectValue placeholder="Group by" />
             </SelectTrigger>
             <SelectContent>
