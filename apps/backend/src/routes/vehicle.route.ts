@@ -1,0 +1,30 @@
+import { Hono } from "hono";
+import * as vehicleController from "../controllers/vehicle.controller.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import {
+  createVehicleSchema,
+  updateVehicleSchema,
+  vehicleParamsSchema,
+} from "../validators/vehicle.validator.js";
+
+const vehicleRouter = new Hono();
+
+vehicleRouter.get("/", vehicleController.getAllVehicles);
+vehicleRouter.get(
+  "/:id",
+  validate({ params: vehicleParamsSchema }),
+  vehicleController.getVehicleById
+);
+vehicleRouter.post("/", validate({ body: createVehicleSchema }), vehicleController.createVehicle);
+vehicleRouter.put(
+  "/:id",
+  validate({ params: vehicleParamsSchema, body: updateVehicleSchema }),
+  vehicleController.updateVehicle
+);
+vehicleRouter.delete(
+  "/:id",
+  validate({ params: vehicleParamsSchema }),
+  vehicleController.deleteVehicle
+);
+
+export default vehicleRouter;
