@@ -1,4 +1,4 @@
-import { AlertTriangle, Award, Ban, Clock, Plus, Search, User } from "lucide-react";
+import { AlertTriangle, Award, Plus, Search, User } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,82 +32,66 @@ import {
 
 const drivers = [
   {
-    id: "DRV-001",
-    name: "Alex Johnson",
-    license: "DL-123456",
-    category: "Van",
-    expiry: "2027-06-15",
+    id: "1",
+    name: "John Doe",
+    license: "23223",
+    expiry: "22/36",
+    completionRate: "92%",
+    safetyScore: "89%",
+    complaints: "4",
     status: "On Duty",
-    trips: 45,
-    safetyScore: 95,
-    phone: "+1 555-0101",
   },
   {
-    id: "DRV-002",
-    name: "Sarah Smith",
-    license: "DL-234567",
-    category: "Truck",
-    expiry: "2026-08-20",
+    id: "2",
+    name: "Rahul Sharma",
+    license: "23224",
+    expiry: "25/28",
+    completionRate: "95%",
+    safetyScore: "92%",
+    complaints: "2",
     status: "On Trip",
-    trips: 78,
-    safetyScore: 92,
-    phone: "+1 555-0102",
   },
   {
-    id: "DRV-003",
-    name: "Mike Brown",
-    license: "DL-345678",
-    category: "Bike",
-    expiry: "2027-03-10",
+    id: "3",
+    name: "Vikram Singh",
+    license: "23225",
+    expiry: "30/27",
+    completionRate: "88%",
+    safetyScore: "85%",
+    complaints: "6",
     status: "Off Duty",
-    trips: 120,
-    safetyScore: 98,
-    phone: "+1 555-0103",
   },
   {
-    id: "DRV-004",
-    name: "Emily Davis",
-    license: "DL-456789",
-    category: "Van",
-    expiry: "2025-12-01",
-    status: "Suspended",
-    trips: 34,
-    safetyScore: 75,
-    phone: "+1 555-0104",
-  },
-  {
-    id: "DRV-005",
-    name: "John Wilson",
-    license: "DL-567890",
-    category: "Truck",
-    expiry: "2027-09-25",
+    id: "4",
+    name: "Amit Kumar",
+    license: "23226",
+    expiry: "15/26",
+    completionRate: "90%",
+    safetyScore: "91%",
+    complaints: "3",
     status: "On Duty",
-    trips: 156,
-    safetyScore: 88,
-    phone: "+1 555-0105",
   },
 ];
 
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "On Duty":
-      return <Badge variant="success">On Duty</Badge>;
+      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">On Duty</Badge>;
     case "On Trip":
-      return <Badge variant="info">On Trip</Badge>;
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">On Trip</Badge>;
     case "Off Duty":
-      return <Badge variant="secondary">Off Duty</Badge>;
+      return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">Off Duty</Badge>;
     case "Suspended":
-      return <Badge variant="destructive">Suspended</Badge>;
+      return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Suspended</Badge>;
     default:
       return <Badge variant="secondary">{status}</Badge>;
   }
 };
 
 const isLicenseExpiringSoon = (expiry: string) => {
-  const expiryDate = new Date(expiry);
-  const today = new Date();
-  const diffDays = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  return diffDays < 90;
+  const [month] = expiry.split("/").map(Number);
+  const currentMonth = 2;
+  return month - currentMonth < 3;
 };
 
 export function DriversPage() {
@@ -117,8 +101,7 @@ export function DriversPage() {
 
   const filteredDrivers = drivers.filter((d) => {
     const matchesSearch =
-      d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.license.toLowerCase().includes(searchTerm.toLowerCase());
+      d.name.toLowerCase().includes(searchTerm.toLowerCase()) || d.license.includes(searchTerm);
     const matchesStatus =
       statusFilter === "all" || d.status.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
@@ -128,7 +111,7 @@ export function DriversPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Driver Profiles</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Driver Performance</h1>
           <p className="text-muted-foreground">Manage driver compliance and performance</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -186,54 +169,6 @@ export function DriversPage() {
         </Dialog>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5 text-blue-500" />
-              <div>
-                <div className="text-2xl font-bold">{drivers.length}</div>
-                <p className="text-sm text-muted-foreground">Total Drivers</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-green-500" />
-              <div>
-                <div className="text-2xl font-bold">3</div>
-                <p className="text-sm text-muted-foreground">On Duty</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-500" />
-              <div>
-                <div className="text-2xl font-bold">1</div>
-                <p className="text-sm text-muted-foreground">License Expiring</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <Ban className="h-5 w-5 text-red-500" />
-              <div>
-                <div className="text-2xl font-bold">1</div>
-                <p className="text-sm text-muted-foreground">Suspended</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
@@ -246,7 +181,7 @@ export function DriversPage() {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-45">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -264,28 +199,25 @@ export function DriversPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Driver</TableHead>
-                <TableHead>License</TableHead>
-                <TableHead>Category</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>License #</TableHead>
                 <TableHead>Expiry</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Trips</TableHead>
+                <TableHead>Completion Rate</TableHead>
                 <TableHead>Safety Score</TableHead>
+                <TableHead>Complaints</TableHead>
+                <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredDrivers.map((driver) => (
                 <TableRow key={driver.id}>
                   <TableCell>
-                    <div>
-                      <div className="font-medium">{driver.name}</div>
-                      <div className="text-sm text-muted-foreground">{driver.phone}</div>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{driver.name}</span>
                     </div>
                   </TableCell>
                   <TableCell>{driver.license}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{driver.category}</Badge>
-                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {isLicenseExpiringSoon(driver.expiry) && (
@@ -300,16 +232,21 @@ export function DriversPage() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell>{getStatusBadge(driver.status)}</TableCell>
-                  <TableCell>{driver.trips}</TableCell>
+                  <TableCell>{driver.completionRate}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Award
-                        className={`h-4 w-4 ${driver.safetyScore >= 90 ? "text-green-500" : driver.safetyScore >= 80 ? "text-amber-500" : "text-red-500"}`}
+                        className={`h-4 w-4 ${parseInt(driver.safetyScore) >= 90 ? "text-green-500" : parseInt(driver.safetyScore) >= 80 ? "text-amber-500" : "text-red-500"}`}
                       />
-                      <span>{driver.safetyScore}%</span>
+                      <span>{driver.safetyScore}</span>
                     </div>
                   </TableCell>
+                  <TableCell>
+                    <Badge variant={parseInt(driver.complaints) > 5 ? "destructive" : "secondary"}>
+                      {driver.complaints}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{getStatusBadge(driver.status)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

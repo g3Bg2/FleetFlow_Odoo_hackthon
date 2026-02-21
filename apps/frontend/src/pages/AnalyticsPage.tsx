@@ -1,246 +1,317 @@
-import { DollarSign, Download, Fuel, TrendingDown, TrendingUp, Truck, Users } from "lucide-react";
+import {
+  Calendar,
+  Download,
+  Fuel,
+  IndianRupee,
+  PieChart,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { AnimatedNumber } from "@/components/ui/animated-number";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const metrics = [
-  { title: "Fuel Efficiency", value: "8.5 km/L", change: "+5%", trend: "up", icon: Fuel },
-  { title: "Total Revenue", value: "$125,400", change: "+12%", trend: "up", icon: DollarSign },
-  { title: "Vehicle ROI", value: "24%", change: "-2%", trend: "down", icon: TrendingDown },
-  { title: "Active Drivers", value: "12", change: "0%", trend: "neutral", icon: Users },
-];
-
-const vehiclePerformance = [
-  { name: "Van-05", trips: 45, revenue: 15000, cost: 4500, roi: 70 },
-  { name: "Truck-12", trips: 38, revenue: 42000, cost: 12000, roi: 71 },
-  { name: "Van-02", trips: 32, revenue: 12000, cost: 3800, roi: 68 },
-  { name: "Truck-08", trips: 28, revenue: 38000, cost: 15000, roi: 60 },
-  { name: "Bike-03", trips: 120, revenue: 8400, cost: 1200, roi: 85 },
+  {
+    title: "Total Fuel Cost",
+    value: 260000,
+    prefix: "₹",
+    suffix: "L",
+    change: 5,
+    trend: "up" as const,
+    icon: Fuel,
+    color: "text-blue-600",
+    gradient: "from-blue-500 to-blue-600",
+  },
+  {
+    title: "Fleet ROI",
+    value: 12.5,
+    suffix: "%",
+    change: 2,
+    trend: "up" as const,
+    icon: TrendingUp,
+    color: "text-emerald-600",
+    gradient: "from-emerald-500 to-emerald-600",
+  },
+  {
+    title: "Utilization Rate",
+    value: 82,
+    suffix: "%",
+    change: 3,
+    trend: "up" as const,
+    icon: PieChart,
+    color: "text-purple-600",
+    gradient: "from-purple-500 to-purple-600",
+  },
+  {
+    title: "Avg Cost/Km",
+    value: 18.5,
+    prefix: "₹",
+    change: -2,
+    trend: "down" as const,
+    icon: IndianRupee,
+    color: "text-amber-600",
+    gradient: "from-amber-500 to-amber-600",
+  },
 ];
 
 const monthlyData = [
-  { month: "Sep", revenue: 85000, expenses: 45000 },
-  { month: "Oct", revenue: 92000, expenses: 48000 },
-  { month: "Nov", revenue: 88000, expenses: 52000 },
-  { month: "Dec", revenue: 105000, expenses: 55000 },
-  { month: "Jan", revenue: 115000, expenses: 58000 },
-  { month: "Feb", revenue: 125400, expenses: 62000 },
+  { month: "Oct", revenue: 920000, fuelCost: 48000, maintenance: 22000, netProfit: 850000 },
+  { month: "Nov", revenue: 880000, fuelCost: 52000, maintenance: 25000, netProfit: 803000 },
+  { month: "Dec", revenue: 1050000, fuelCost: 55000, maintenance: 28000, netProfit: 967000 },
+  { month: "Jan", revenue: 1150000, fuelCost: 58000, maintenance: 30000, netProfit: 1062000 },
+  { month: "Feb", revenue: 1254000, fuelCost: 62000, maintenance: 32000, netProfit: 1160000 },
 ];
+
+const vehiclePerformance = [
+  { name: "TATA 1210", trips: 45, revenue: 150000, cost: 45000, efficiency: 8.5 },
+  { name: "Ashok Leyland", trips: 38, revenue: 180000, cost: 52000, efficiency: 7.2 },
+  { name: "Eicher Pro", trips: 32, revenue: 120000, cost: 38000, efficiency: 9.1 },
+  { name: "Mahindra Loadking", trips: 28, revenue: 98000, cost: 32000, efficiency: 8.8 },
+  { name: "Tata Ace", trips: 120, revenue: 84000, cost: 12000, efficiency: 12.5 },
+];
+
+const formatCurrency = (value: number) => {
+  if (value >= 100000) {
+    return `₹${(value / 100000).toFixed(1)}L`;
+  }
+  return `₹${value.toLocaleString()}`;
+};
 
 export function AnalyticsPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Analytics & Reports</h1>
-          <p className="text-muted-foreground">Financial and operational insights</p>
+          <h1 className="text-2xl font-bold">Analytics & Reports</h1>
+          <p className="text-muted-foreground mt-1">
+            Financial insights and operational performance metrics
+          </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-3">
+          <Select defaultValue="monthly">
+            <SelectTrigger className="w-35">
+              <SelectValue placeholder="Period" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="daily">Daily</SelectItem>
+              <SelectItem value="weekly">Weekly</SelectItem>
+              <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectItem value="yearly">Yearly</SelectItem>
+            </SelectContent>
+          </Select>
           <Button variant="outline">
             <Download className="h-4 w-4 mr-2" />
-            Export CSV
-          </Button>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export PDF
+            Export
           </Button>
         </div>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {metrics.map((metric) => (
-          <Card key={metric.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
-              <metric.icon className="h-4 w-4 text-muted-foreground" />
+          <Card
+            key={metric.title}
+            className="relative overflow-hidden group hover:shadow-lg transition-all"
+          >
+            <div
+              className={`absolute top-0 left-0 w-full h-1 bg-linear-to-r ${metric.gradient}`}
+            />
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {metric.title}
+              </CardTitle>
+              <div className={`p-2 rounded-xl bg-slate-50 ${metric.color}`}>
+                <metric.icon className="h-4 w-4" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{metric.value}</div>
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                {metric.trend === "up" && <TrendingUp className="h-3 w-3 text-green-500" />}
-                {metric.trend === "down" && <TrendingDown className="h-3 w-3 text-red-500" />}
-                <span
-                  className={
-                    metric.trend === "up"
-                      ? "text-green-500"
-                      : metric.trend === "down"
-                        ? "text-red-500"
-                        : ""
-                  }
-                >
-                  {metric.change}
+              <div className={`text-2xl font-bold ${metric.color}`}>
+                {metric.prefix}
+                <AnimatedNumber value={metric.value} suffix={metric.suffix} />
+              </div>
+              <div className="flex items-center gap-1 mt-2 text-xs">
+                {metric.trend === "up" ? (
+                  <TrendingUp className="h-3 w-3 text-emerald-500" />
+                ) : (
+                  <TrendingDown className="h-3 w-3 text-red-500" />
+                )}
+                <span className={metric.trend === "up" ? "text-emerald-600" : "text-red-500"}>
+                  {metric.change > 0 ? "+" : ""}
+                  {metric.change}%
                 </span>
-                from last month
-              </p>
+                <span className="text-muted-foreground">vs last period</span>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="vehicles">Vehicle Performance</TabsTrigger>
-          <TabsTrigger value="financial">Financial</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue vs Expenses</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {monthlyData.map((data) => (
-                    <div key={data.month} className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{data.month}</span>
-                      <div className="flex items-center gap-4">
-                        <div className="w-32 h-2 bg-secondary rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-green-500"
-                            style={{ width: `${(data.revenue / 150000) * 100}%` }}
-                          />
-                        </div>
-                        <span className="text-sm text-muted-foreground w-20">
-                          ${(data.revenue / 1000).toFixed(0)}k
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Fleet Utilization</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>On Trip</span>
-                      <span>12 vehicles</span>
-                    </div>
-                    <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-500" style={{ width: "48%" }} />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Available</span>
-                      <span>8 vehicles</span>
-                    </div>
-                    <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
-                      <div className="h-full bg-green-500" style={{ width: "32%" }} />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>In Shop</span>
-                      <span>3 vehicles</span>
-                    </div>
-                    <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
-                      <div className="h-full bg-amber-500" style={{ width: "12%" }} />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Retired</span>
-                      <span>2 vehicles</span>
-                    </div>
-                    <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
-                      <div className="h-full bg-gray-400" style={{ width: "8%" }} />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+      {/* Financial Summary */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Financial Summary</CardTitle>
+            <Badge variant="secondary">Last 5 months</Badge>
           </div>
-        </TabsContent>
-
-        <TabsContent value="vehicles" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Vehicle Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {vehiclePerformance.map((vehicle) => (
-                  <div
-                    key={vehicle.name}
-                    className="flex items-center justify-between p-4 border rounded-lg"
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">
+                    Month
+                  </th>
+                  <th className="text-right py-3 px-4 font-medium text-sm text-muted-foreground">
+                    Revenue
+                  </th>
+                  <th className="text-right py-3 px-4 font-medium text-sm text-muted-foreground">
+                    Fuel Cost
+                  </th>
+                  <th className="text-right py-3 px-4 font-medium text-sm text-muted-foreground">
+                    Maintenance
+                  </th>
+                  <th className="text-right py-3 px-4 font-medium text-sm text-muted-foreground">
+                    Net Profit
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {monthlyData.map((data, index) => (
+                  <tr
+                    key={data.month}
+                    className={`border-b last:border-0 hover:bg-slate-50/50 transition-colors ${
+                      index === monthlyData.length - 1 ? "bg-primary/5" : ""
+                    }`}
                   >
-                    <div className="flex items-center gap-4">
-                      <Truck className="h-8 w-8 text-muted-foreground" />
-                      <div>
-                        <div className="font-medium">{vehicle.name}</div>
-                        <div className="text-sm text-muted-foreground">{vehicle.trips} trips</div>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{data.month}</span>
+                        {index === monthlyData.length - 1 && (
+                          <Badge variant="secondary" className="text-[10px]">
+                            Current
+                          </Badge>
+                        )}
                       </div>
+                    </td>
+                    <td className="py-4 px-4 text-right font-medium text-emerald-600">
+                      {formatCurrency(data.revenue)}
+                    </td>
+                    <td className="py-4 px-4 text-right text-red-600">
+                      {formatCurrency(data.fuelCost)}
+                    </td>
+                    <td className="py-4 px-4 text-right text-amber-600">
+                      {formatCurrency(data.maintenance)}
+                    </td>
+                    <td className="py-4 px-4 text-right font-bold text-primary">
+                      {formatCurrency(data.netProfit)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Vehicle Performance */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Performing Vehicles</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {vehiclePerformance.slice(0, 5).map((vehicle, index) => (
+              <div
+                key={vehicle.name}
+                className="flex items-center gap-4 p-4 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors"
+              >
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary font-bold text-sm">
+                  {index + 1}
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium">{vehicle.name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {vehicle.trips} trips completed
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-semibold text-emerald-600">
+                    {formatCurrency(vehicle.revenue)}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Revenue</div>
+                </div>
+                <div className="w-20">
+                  <div className="text-right text-sm font-medium mb-1">
+                    {vehicle.efficiency} km/L
+                  </div>
+                  <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full"
+                      style={{ width: `${(vehicle.efficiency / 15) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Cost Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {[
+                { label: "Fuel", percentage: 45, amount: 62000, color: "bg-blue-500" },
+                { label: "Maintenance", percentage: 25, amount: 32000, color: "bg-amber-500" },
+                { label: "Driver Wages", percentage: 20, amount: 28000, color: "bg-purple-500" },
+                { label: "Miscellaneous", percentage: 10, amount: 14000, color: "bg-slate-400" },
+              ].map((item) => (
+                <div key={item.label}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${item.color}`} />
+                      <span className="font-medium">{item.label}</span>
                     </div>
                     <div className="text-right">
-                      <div className="font-medium">${vehicle.revenue.toLocaleString()}</div>
-                      <div className="text-sm text-muted-foreground">
-                        Cost: ${vehicle.cost.toLocaleString()}
-                      </div>
-                    </div>
-                    <div className="w-24">
-                      <div className="text-sm font-medium text-right">{vehicle.roi}% ROI</div>
-                      <div className="w-full h-2 bg-secondary rounded-full overflow-hidden mt-1">
-                        <div
-                          className={`h-full ${vehicle.roi >= 70 ? "bg-green-500" : vehicle.roi >= 60 ? "bg-amber-500" : "bg-red-500"}`}
-                          style={{ width: `${vehicle.roi}%` }}
-                        />
-                      </div>
+                      <span className="font-semibold">{formatCurrency(item.amount)}</span>
+                      <span className="text-sm text-muted-foreground ml-2">
+                        ({item.percentage}%)
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                  <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${item.color} rounded-full transition-all duration-1000`}
+                      style={{ width: `${item.percentage}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
 
-        <TabsContent value="financial" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Monthly Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {monthlyData.map((data) => (
-                  <div
-                    key={data.month}
-                    className="flex items-center justify-between p-4 border rounded-lg"
-                  >
-                    <span className="font-medium">{data.month}</span>
-                    <div className="flex items-center gap-8">
-                      <div className="text-right">
-                        <div className="text-sm text-muted-foreground">Revenue</div>
-                        <div className="font-medium text-green-600">
-                          ${data.revenue.toLocaleString()}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-muted-foreground">Expenses</div>
-                        <div className="font-medium text-red-600">
-                          ${data.expenses.toLocaleString()}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-muted-foreground">Profit</div>
-                        <div className="font-medium">
-                          ${(data.revenue - data.expenses).toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+            <div className="mt-6 pt-6 border-t">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold">Total Expenses</span>
+                <span className="text-2xl font-bold text-primary">₹1,36,000</span>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
