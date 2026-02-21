@@ -11,22 +11,33 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { roleLabels } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { to: "/dashboard", icon: LayoutDashboard, label: "Command Center" },
-  { to: "/vehicles", icon: Truck, label: "Vehicle Registry" },
-  { to: "/trips", icon: Route, label: "Trip Dispatcher" },
-  { to: "/maintenance", icon: Wrench, label: "Maintenance" },
-  { to: "/fuel", icon: Fuel, label: "Fuel & Expenses" },
-  { to: "/drivers", icon: Users, label: "Driver Profiles" },
-  { to: "/analytics", icon: BarChart3, label: "Analytics" },
+const allNavItems = [
+  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard", key: "dashboard" },
+  { to: "/vehicles", icon: Truck, label: "Vehicle Registry", key: "vehicles" },
+  { to: "/trips", icon: Route, label: "Trip Dispatcher", key: "trips" },
+  { to: "/maintenance", icon: Wrench, label: "Maintenance", key: "maintenance" },
+  { to: "/fuel", icon: Fuel, label: "Trip & Expense", key: "fuel" },
+  { to: "/drivers", icon: Users, label: "Performance", key: "drivers" },
+  { to: "/analytics", icon: BarChart3, label: "Analytics", key: "analytics" },
 ];
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, logout, hasPermission } = useAuth();
+  const navigate = useNavigate();
+
+  const navItems = allNavItems.filter((item) => hasPermission(item.key));
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,6 +59,13 @@ export function AppLayout() {
         <div className="flex h-16 items-center border-b px-6">
           <span className="font-bold text-xl">FleetFlow</span>
         </div>
+
+        {/* User Info */}
+        <div className="px-4 py-3 border-b">
+          <div className="text-sm font-medium">{user?.name}</div>
+          <div className="text-xs text-muted-foreground">{user?.role && roleLabels[user.role]}</div>
+        </div>
+
         <nav className="space-y-1 p-4">
           {navItems.map((item) => (
             <NavLink
@@ -71,6 +89,7 @@ export function AppLayout() {
         <div className="absolute bottom-4 left-0 right-0 px-4">
           <Button
             variant="ghost"
+            onClick={handleLogout}
             className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
           >
             <LogOut className="h-5 w-5 mr-3" />

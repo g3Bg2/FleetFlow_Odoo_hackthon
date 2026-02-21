@@ -24,6 +24,7 @@ export function RegisterPage() {
     licenseNumber: "",
     licenseCategory: "",
   });
+  const [error, setError] = useState("");
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -31,12 +32,22 @@ export function RegisterPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      setError("Passwords do not match!");
       return;
     }
-    localStorage.setItem("userRole", formData.role || "manager");
-    navigate("/dashboard");
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    // In a real app, this would call an API
+    // For demo, we just redirect to login
+    alert("Registration successful! Please login with your credentials.");
+    navigate("/login");
   };
 
   return (
@@ -148,6 +159,9 @@ export function RegisterPage() {
                 required
               />
             </div>
+
+            {error && <div className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>}
+
             <Button type="submit" className="w-full">
               Register
             </Button>
