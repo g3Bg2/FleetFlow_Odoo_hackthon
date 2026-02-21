@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { errorHandler, notFoundHandler } from "./middlewares/index.js";
+import analyticsRouter from "./routes/analytics.route.js";
 import authRouter from "./routes/auth.route.js";
 import dashboardRouter from "./routes/dashboard.route.js";
 import driverRouter from "./routes/driver.route.js";
@@ -20,6 +21,7 @@ app.get("/", (c) => {
 app.route("/auth", authRouter);
 
 app.route("/dashboard", dashboardRouter);
+app.route("/analytics", analyticsRouter);
 
 app.route("/users", userRouter);
 app.route("/roles", roleRouter);
