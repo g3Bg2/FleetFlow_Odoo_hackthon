@@ -2,8 +2,10 @@ node_modules
 dist
 build
 .git
+.gitignore
 *.md
 .env
 .env.*
+.turbo
 *.log
 .DS_Store
