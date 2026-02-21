@@ -1,4 +1,4 @@
-import { Edit, Plus, Search, Trash2 } from "lucide-react";
+import { Bike, Car, Edit, Plus, Search, Trash2, Truck } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,14 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useAuth } from "@/hooks/useAuth";
 
 const vehicles = [
   {
@@ -39,6 +32,7 @@ const vehicles = [
     capacity: "20 Ton",
     odometer: 79000,
     status: "Idle",
+    driver: "John Doe",
   },
   {
     id: 2,
@@ -48,52 +42,87 @@ const vehicles = [
     capacity: "25 Ton",
     odometer: 120000,
     status: "On Trip",
+    driver: "Rahul Sharma",
   },
   {
     id: 3,
     plate: "KA 02 EF 9012",
-    model: "Eicher",
+    model: "Eicher Pro",
     type: "Van",
     capacity: "5 Ton",
     odometer: 65000,
     status: "Idle",
+    driver: "Unassigned",
   },
   {
     id: 4,
     plate: "MH 04 GH 3456",
-    model: "Mahindra",
+    model: "Mahindra Loadking",
     type: "Van",
     capacity: "3 Ton",
     odometer: 45000,
     status: "In Shop",
+    driver: "Unassigned",
   },
   {
     id: 5,
     plate: "TN 05 IJ 7890",
-    model: "Piaggio",
+    model: "Piaggio Ape",
     type: "Bike",
     capacity: "200 kg",
     odometer: 25000,
     status: "Idle",
+    driver: "Vikram Singh",
+  },
+  {
+    id: 6,
+    plate: "UP 16 KL 4567",
+    model: "Tata Ace",
+    type: "Van",
+    capacity: "750 kg",
+    odometer: 52000,
+    status: "On Trip",
+    driver: "Amit Kumar",
   },
 ];
 
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "Idle":
-      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Idle</Badge>;
+      return <Badge variant="success">Idle</Badge>;
     case "On Trip":
-      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">On Trip</Badge>;
+      return (
+        <Badge variant="info">
+          On Trip
+        </Badge>
+      );
     case "In Shop":
-      return <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">In Shop</Badge>;
+      return <Badge variant="warning">In Shop</Badge>;
+    case "Retired":
+      return <Badge variant="secondary">Retired</Badge>;
     default:
       return <Badge variant="secondary">{status}</Badge>;
   }
 };
 
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case "Truck":
+      return <Truck className="h-4 w-4" />;
+    case "Van":
+      return <Car className="h-4 w-4" />;
+    case "Bike":
+      return <Bike className="h-4 w-4" />;
+    default:
+      return <Truck className="h-4 w-4" />;
+  }
+};
+
 export function VehiclesPage() {
+  const { hasPermission } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const filteredVehicles = vehicles.filter((v) => {
@@ -101,85 +130,124 @@ export function VehiclesPage() {
       v.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
       v.plate.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === "all" || v.type.toLowerCase() === typeFilter;
-    return matchesSearch && matchesType;
+    const matchesStatus =
+      statusFilter === "all" || v.status.toLowerCase() === statusFilter.toLowerCase();
+    return matchesSearch && matchesType && matchesStatus;
   });
 
+  const canAdd = hasPermission("vehicles");
+  const canEdit = hasPermission("vehicles");
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Vehicle Registry</h1>
-          <p className="text-muted-foreground">Manage your fleet assets</p>
+          <h1 className="text-2xl font-bold">Vehicle Registry</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage your fleet assets and vehicle information
+          </p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              New Vehicle
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>New Vehicle Registration</DialogTitle>
-              <DialogDescription>Add a new vehicle to your fleet</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="plate">License Plate</Label>
-                <Input id="plate" placeholder="e.g., MH 00 AB 1234" />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="model">Model</Label>
-                <Input id="model" placeholder="e.g., TATA 1210" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label>Type</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="truck">Truck</SelectItem>
-                      <SelectItem value="van">Van</SelectItem>
-                      <SelectItem value="bike">Bike</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="capacity">Max Payload</Label>
-                  <Input id="capacity" placeholder="e.g., 20 Ton" />
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="odometer">Initial Odometer</Label>
-                <Input id="odometer" type="number" placeholder="0" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                Cancel
+        {canAdd && (
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="lg">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Vehicle
               </Button>
-              <Button onClick={() => setDialogOpen(false)}>Save</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle>New Vehicle Registration</DialogTitle>
+                <DialogDescription>Add a new vehicle to your fleet inventory</DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="plate">License Plate *</Label>
+                    <Input id="plate" placeholder="MH 00 AB 1234" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="model">Model *</Label>
+                    <Input id="model" placeholder="TATA 1210" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Vehicle Type *</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="truck">Truck</SelectItem>
+                        <SelectItem value="van">Van</SelectItem>
+                        <SelectItem value="bike">Bike</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="capacity">Max Payload *</Label>
+                    <Input id="capacity" placeholder="20 Ton" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="odometer">Initial Odometer (km)</Label>
+                  <Input id="odometer" type="number" placeholder="0" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={() => setDialogOpen(false)}>Register Vehicle</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
+
+      {/* Stats Summary */}
+      <div className="grid gap-4 sm:grid-cols-4">
+        {[
+          { label: "Total Vehicles", value: vehicles.length, color: "text-primary" },
+          {
+            label: "On Trip",
+            value: vehicles.filter((v) => v.status === "On Trip").length,
+            color: "text-blue-600",
+          },
+          {
+            label: "Idle",
+            value: vehicles.filter((v) => v.status === "Idle").length,
+            color: "text-emerald-600",
+          },
+          {
+            label: "In Shop",
+            value: vehicles.filter((v) => v.status === "In Shop").length,
+            color: "text-amber-600",
+          },
+        ].map((stat) => (
+          <Card key={stat.label} className="p-4">
+            <div className="text-sm text-muted-foreground">{stat.label}</div>
+            <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
+          </Card>
+        ))}
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by plate or model..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
+            className="pl-10"
           />
         </div>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Vehicle Type" />
+          <SelectTrigger className="w-full sm:w-[140px]">
+            <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Types</SelectItem>
@@ -188,52 +256,109 @@ export function VehiclesPage() {
             <SelectItem value="bike">Bikes</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-full sm:w-[140px]">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="idle">Idle</SelectItem>
+            <SelectItem value="on trip">On Trip</SelectItem>
+            <SelectItem value="in shop">In Shop</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Vehicles Table */}
+      {/* Vehicles Grid/Table */}
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>No</TableHead>
-                <TableHead>Plate</TableHead>
-                <TableHead>Model</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Capacity</TableHead>
-                <TableHead>Odometer</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredVehicles.map((vehicle, index) => (
-                <TableRow key={vehicle.id}>
-                  <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell>{vehicle.plate}</TableCell>
-                  <TableCell>{vehicle.model}</TableCell>
-                  <TableCell>{vehicle.type}</TableCell>
-                  <TableCell>{vehicle.capacity}</TableCell>
-                  <TableCell>{vehicle.odometer.toLocaleString()} km</TableCell>
-                  <TableCell>{getStatusBadge(vehicle.status)}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-red-500 hover:text-red-600"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b bg-slate-50/50">
+                  <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
+                    Vehicle
+                  </th>
+                  <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
+                    Plate
+                  </th>
+                  <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
+                    Type
+                  </th>
+                  <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
+                    Capacity
+                  </th>
+                  <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
+                    Odometer
+                  </th>
+                  <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
+                    Driver
+                  </th>
+                  <th className="text-left py-4 px-4 font-medium text-sm text-muted-foreground">
+                    Status
+                  </th>
+                  {canEdit && (
+                    <th className="text-right py-4 px-4 font-medium text-sm text-muted-foreground">
+                      Actions
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredVehicles.map((vehicle) => (
+                  <tr
+                    key={vehicle.id}
+                    className="border-b last:border-0 hover:bg-slate-50/50 transition-colors"
+                  >
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                          {getTypeIcon(vehicle.type)}
+                        </div>
+                        <span className="font-medium">{vehicle.model}</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <code className="text-sm bg-slate-100 px-2 py-1 rounded">
+                        {vehicle.plate}
+                      </code>
+                    </td>
+                    <td className="py-4 px-4">{vehicle.type}</td>
+                    <td className="py-4 px-4">{vehicle.capacity}</td>
+                    <td className="py-4 px-4">{vehicle.odometer.toLocaleString()} km</td>
+                    <td className="py-4 px-4 text-muted-foreground">{vehicle.driver}</td>
+                    <td className="py-4 px-4">{getStatusBadge(vehicle.status)}</td>
+                    {canEdit && (
+                      <td className="py-4 px-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {filteredVehicles.length === 0 && (
+            <div className="text-center py-12">
+              <Truck className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+              <p className="text-muted-foreground">No vehicles found</p>
+              <p className="text-sm text-muted-foreground/70">
+                Try adjusting your search or filters
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

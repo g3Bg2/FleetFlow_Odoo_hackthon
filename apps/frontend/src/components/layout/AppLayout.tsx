@@ -112,7 +112,7 @@ export function AppLayout() {
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-sm truncate">{user?.name}</div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="premium" className="text-[10px] px-1.5 py-0">
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
                     {user?.role && roleLabels[user.role]}
                   </Badge>
                 </div>
@@ -184,29 +184,6 @@ export function AppLayout() {
 
             {/* Right - Search, Notifications, User */}
             <div className="flex items-center gap-3">
-              {/* Search */}
-              <div className="hidden md:flex items-center relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search..."
-                  className="w-64 pl-9 h-9 bg-slate-50/50 border-0 focus-visible:ring-1"
-                />
-                <kbd className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none h-5 px-1.5 text-[10px] font-medium bg-slate-100 rounded border text-muted-foreground">
-                  ⌘K
-                </kbd>
-              </div>
-
-              {/* Notifications */}
-              <Button variant="ghost" size="icon" className="relative h-9 w-9">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-              </Button>
-
-              {/* Settings */}
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Settings className="h-5 w-5" />
-              </Button>
-
               {/* User Avatar */}
               <div className="hidden sm:flex items-center gap-2 pl-3 border-l">
                 <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-sm font-semibold shadow-sm">
