@@ -99,7 +99,7 @@ export function AnalyticsPage() {
         </div>
         <div className="flex items-center gap-3">
           <Select defaultValue="monthly">
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-35">
               <SelectValue placeholder="Period" />
             </SelectTrigger>
             <SelectContent>
@@ -124,7 +124,7 @@ export function AnalyticsPage() {
             className="relative overflow-hidden group hover:shadow-lg transition-all"
           >
             <div
-              className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${metric.gradient}`}
+              className={`absolute top-0 left-0 w-full h-1 bg-linear-to-r ${metric.gradient}`}
             />
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">

@@ -370,7 +370,7 @@ export function DashboardPage() {
                   <Card className="hover:shadow-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
                     <CardContent className="p-4">
                       <div
-                        className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-3 shadow-sm`}
+                        className={`w-10 h-10 rounded-xl bg-linear-to-br ${action.color} flex items-center justify-center mb-3 shadow-sm`}
                       >
                         <action.icon className="h-5 w-5 text-white" />
                       </div>

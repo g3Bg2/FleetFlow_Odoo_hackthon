@@ -258,7 +258,7 @@ export function FuelPage() {
         </Card>
 
         <Card className="relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-600" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-amber-500 to-amber-600" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Cost per km</CardTitle>
             <IndianRupee className="h-4 w-4 text-amber-500" />
@@ -284,7 +284,7 @@ export function FuelPage() {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full sm:w-[140px]">
+          <SelectTrigger className="w-full sm:w-35">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>

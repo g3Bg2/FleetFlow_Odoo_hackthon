@@ -58,7 +58,7 @@ export function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 gradient-mesh" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-violet-600/80 to-primary/70" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/90 via-violet-600/80 to-primary/70" />
 
         {/* Floating Elements */}
         <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-float" />

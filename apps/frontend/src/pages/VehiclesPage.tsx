@@ -246,7 +246,7 @@ export function VehiclesPage() {
           />
         </div>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-[140px]">
+          <SelectTrigger className="w-full sm:w-35">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
@@ -257,7 +257,7 @@ export function VehiclesPage() {
           </SelectContent>
         </Select>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full sm:w-[140px]">
+          <SelectTrigger className="w-full sm:w-35">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
