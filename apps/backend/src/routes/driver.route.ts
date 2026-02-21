@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import * as driverController from "../controllers/driver.controller.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import {
   createDriverSchema,
@@ -9,16 +10,28 @@ import {
 
 const driverRouter = new Hono();
 
-driverRouter.get("/", driverController.getAllDrivers);
-driverRouter.get("/:id", validate({ params: driverParamsSchema }), driverController.getDriverById);
-driverRouter.post("/", validate({ body: createDriverSchema }), driverController.createDriver);
+driverRouter.get("/", authMiddleware, driverController.getAllDrivers);
+driverRouter.get(
+  "/:id",
+  authMiddleware,
+  validate({ params: driverParamsSchema }),
+  driverController.getDriverById
+);
+driverRouter.post(
+  "/",
+  authMiddleware,
+  validate({ body: createDriverSchema }),
+  driverController.createDriver
+);
 driverRouter.put(
   "/:id",
+  authMiddleware,
   validate({ params: driverParamsSchema, body: updateDriverSchema }),
   driverController.updateDriver
 );
 driverRouter.delete(
   "/:id",
+  authMiddleware,
   validate({ params: driverParamsSchema }),
   driverController.deleteDriver
 );
