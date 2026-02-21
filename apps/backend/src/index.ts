@@ -1,6 +1,9 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { errorHandler, notFoundHandler } from "./middlewares/index.js";
+import analyticsRouter from "./routes/analytics.route.js";
+import authRouter from "./routes/auth.route.js";
+import dashboardRouter from "./routes/dashboard.route.js";
 import driverRouter from "./routes/driver.route.js";
 import fuelLogRouter from "./routes/fuel-log.route.js";
 import maintenanceLogRouter from "./routes/maintenance-log.route.js";
@@ -14,6 +17,11 @@ const app = new Hono();
 app.get("/", (c) => {
   return c.json({ message: "FleetFlow API", version: "1.0.0" });
 });
+
+app.route("/auth", authRouter);
+
+app.route("/dashboard", dashboardRouter);
+app.route("/analytics", analyticsRouter);
 
 app.route("/users", userRouter);
 app.route("/roles", roleRouter);

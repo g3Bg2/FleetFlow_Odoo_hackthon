@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import * as userController from "../controllers/user.controller.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import {
   createUserSchema,
@@ -9,14 +10,25 @@ import {
 
 const userRouter = new Hono();
 
-userRouter.get("/", userController.getAllUsers);
-userRouter.get("/:id", validate({ params: userParamsSchema }), userController.getUserById);
+userRouter.get("/", authMiddleware, userController.getAllUsers);
+userRouter.get(
+  "/:id",
+  authMiddleware,
+  validate({ params: userParamsSchema }),
+  userController.getUserById
+);
 userRouter.post("/", validate({ body: createUserSchema }), userController.createUser);
 userRouter.put(
   "/:id",
+  authMiddleware,
   validate({ params: userParamsSchema, body: updateUserSchema }),
   userController.updateUser
 );
-userRouter.delete("/:id", validate({ params: userParamsSchema }), userController.deleteUser);
+userRouter.delete(
+  "/:id",
+  authMiddleware,
+  validate({ params: userParamsSchema }),
+  userController.deleteUser
+);
 
 export default userRouter;
