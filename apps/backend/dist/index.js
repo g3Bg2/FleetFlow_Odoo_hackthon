@@ -1,16 +1,20 @@
 import { serve } from "@hono/node-server";
-import userRouter from "./routes/user.js";
-import todoRouter from "./routes/todo.js";
 import { Hono } from "hono";
+import todoRouter from "./routes/todo.js";
+import userRouter from "./routes/user.js";
+
 const app = new Hono();
 app.get("/", (c) => {
-    return c.text("Hello Hono!");
+  return c.text("Hello Hono!");
 });
 app.route("/users", userRouter);
 app.route("/todos", todoRouter);
-serve({
+serve(
+  {
     fetch: app.fetch,
     port: 3000,
-}, (info) => {
+  },
+  (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);
-});
+  }
+);

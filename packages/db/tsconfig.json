@@ -1,14 +1,14 @@
 {
-  "extends": "@repo/typescript-config/base.json", 
+  "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "outDir": "./dist", 
-    "rootDir": "./src", 
-    "declaration": true, 
-    "declarationMap": true, 
-    "sourceMap": true, 
-    "esModuleInterop": true, 
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
     "module": "NodeNext"
   },
-  "include": ["src/**/*.ts"], 
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

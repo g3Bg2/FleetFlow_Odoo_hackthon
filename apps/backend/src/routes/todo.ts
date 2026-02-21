@@ -1,6 +1,6 @@
 import { db, todos } from "@repo/db";
-import { Hono } from "hono";
 import { eq } from "drizzle-orm";
+import { Hono } from "hono";
 
 const todoRouter = new Hono();
 
@@ -27,7 +27,7 @@ todoRouter.post("/", async (c) => {
         id: todo.id.toString(),
         userId,
       },
-      201,
+      201
     );
   } catch (error) {
     const errorMsg =
@@ -42,10 +42,7 @@ todoRouter.get("/:userId", async (c) => {
   try {
     const userId = Number(c.req.param("userId"));
 
-    const todosResult = await db
-      .select()
-      .from(todos)
-      .where(eq(todos.userId, userId));
+    const todosResult = await db.select().from(todos).where(eq(todos.userId, userId));
 
     const todosSuitableForJson = todosResult.map((todo) => ({
       ...todo,
@@ -82,7 +79,7 @@ todoRouter.put("/:id", async (c) => {
         userId: todo.userId.toString(),
         dueDate,
       },
-      200,
+      200
     );
   } catch (error) {
     const errorMsg =

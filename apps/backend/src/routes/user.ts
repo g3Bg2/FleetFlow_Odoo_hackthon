@@ -3,7 +3,7 @@ import { Hono } from "hono";
 
 const userRouter = new Hono();
 
-userRouter.post("/", async (c, next) => {
+userRouter.post("/", async (c, _next) => {
   try {
     const { name } = await c.req.json();
     const [user] = await db.insert(users).values({ name }).returning();
@@ -12,7 +12,7 @@ userRouter.post("/", async (c, next) => {
         id: user.id.toString(),
         name: user.name,
       },
-      200,
+      200
     );
   } catch (error) {
     const errorMsg =
@@ -23,7 +23,7 @@ userRouter.post("/", async (c, next) => {
   }
 });
 
-userRouter.get("/", async (c, next) => {
+userRouter.get("/", async (c, _next) => {
   try {
     const usersResult = await db.select().from(users);
     const usersWithIdAsString = usersResult.map((user) => ({
