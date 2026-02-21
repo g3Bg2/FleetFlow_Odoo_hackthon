@@ -44,7 +44,18 @@ export async function createMaintenanceLog(c: Context) {
     throw new ValidationError("Vehicle does not exist");
   }
 
+  if (vehicle.status === "on_trip") {
+    throw new ValidationError("Cannot add maintenance log while vehicle is on a trip");
+  }
+
+  if (vehicle.status === "retired") {
+    throw new ValidationError("Cannot add maintenance log for retired vehicle");
+  }
+
   const maintenanceLog = await maintenanceLogService.createMaintenanceLog(data);
+
+  await vehicleService.updateVehicle(data.vehicle_id, { status: "in_shop" });
+
   return c.json(sanitizeMaintenanceLog(maintenanceLog), 201);
 }
 
@@ -73,9 +84,16 @@ export async function updateMaintenanceLog(c: Context) {
 
 export async function deleteMaintenanceLog(c: Context) {
   const { id } = getValidatedParams<MaintenanceLogParams>(c);
-  const maintenanceLog = await maintenanceLogService.deleteMaintenanceLog(id);
+  const maintenanceLog = await maintenanceLogService.findMaintenanceLogById(id);
   if (!maintenanceLog) {
     throw new NotFoundError("Maintenance log");
   }
+
+  const vehicle = await vehicleService.findVehicleById(maintenanceLog.vehicleId);
+  if (vehicle && vehicle.status === "in_shop") {
+    await vehicleService.updateVehicle(maintenanceLog.vehicleId, { status: "available" });
+  }
+
+  await maintenanceLogService.deleteMaintenanceLog(id);
   return c.json({ message: "Maintenance log deleted successfully" });
 }
