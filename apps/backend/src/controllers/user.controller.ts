@@ -4,16 +4,17 @@ import { ConflictError, NotFoundError, ValidationError } from "../middlewares/er
 import { getValidatedBody, getValidatedParams } from "../middlewares/validate.middleware.js";
 import * as roleService from "../services/role.service.js";
 import * as userService from "../services/user.service.js";
-import { convertToCamelCase } from "../utils/transform.js";
+import { convertToCamelCase, convertToSnakeCase } from "../utils/transform.js";
 import type { CreateUserInput, UpdateUserInput, UserParams } from "../validators/user.validator.js";
 
 function sanitizeUser(user: User) {
   const { passwordHash, ...userWithoutPassword } = user;
-  return {
+  const camelResult = {
     ...userWithoutPassword,
     id: user.id.toString(),
     roleId: user.roleId ?? undefined,
   };
+  return convertToSnakeCase(camelResult);
 }
 
 export async function getAllUsers(c: Context) {
